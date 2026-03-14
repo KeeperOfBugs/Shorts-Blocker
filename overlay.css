@@ -1,0 +1,117 @@
+/* Injected by Shorts Pause extension */
+#shorts-pause-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(8, 8, 8, 0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
+  animation: sp-fadein 0.3s ease;
+}
+
+@keyframes sp-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#shorts-pause-box {
+  background: #111;
+  border: 1.5px solid #333;
+  border-radius: 4px;
+  padding: 40px 48px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  color: #e0e0e0;
+}
+
+#shorts-pause-box h2 {
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #666;
+  margin: 0 0 28px;
+  font-weight: 400;
+}
+
+#shorts-pause-timer {
+  font-size: 72px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin: 0 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+#shorts-pause-bar-track {
+  height: 2px;
+  background: #222;
+  border-radius: 2px;
+  margin: 24px 0 28px;
+  overflow: hidden;
+}
+
+#shorts-pause-bar {
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+
+#shorts-pause-message {
+  font-size: 15px;
+  color: #aaa;
+  line-height: 1.6;
+  margin: 0 0 32px;
+}
+
+#shorts-pause-message strong {
+  color: #e0e0e0;
+  font-weight: 400;
+}
+
+#shorts-pause-btn {
+  display: none;
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 12px 32px;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.15s;
+  animation: sp-popin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes sp-popin {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+#shorts-pause-btn:hover {
+  opacity: 0.85;
+}
+
+#shorts-pause-skip {
+  display: block;
+  margin-top: 16px;
+  font-size: 11px;
+  color: #444;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+#shorts-pause-skip:hover {
+  color: #888;
+}

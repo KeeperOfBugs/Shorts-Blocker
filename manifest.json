@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Shorts Pause",
+  "version": "1.0",
+  "description": "Adds a 15-second mindfulness pause before YouTube Shorts play.",
+  "permissions": ["scripting", "tabs"],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/shorts/*"],
+      "js": ["content.js"],
+      "css": ["overlay.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "shorts-pause@aowa.com",
+      "strict_min_version": "109.0"
+    }
+  }
+}
