@@ -3,13 +3,24 @@
   "name": "Shorts Pause",
   "version": "1.0",
   "description": "Adds a 15-second mindfulness pause before YouTube Shorts play.",
-  "permissions": ["scripting", "tabs"],
-  "host_permissions": ["https://www.youtube.com/*"],
+  "permissions": [
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/shorts/*"],
-      "js": ["content.js"],
-      "css": ["overlay.css"],
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "overlay.css"
+      ],
       "run_at": "document_start"
     }
   ],

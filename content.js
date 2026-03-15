@@ -9,43 +9,34 @@
     "The scroll can wait.<br>You are <strong>in control</strong>.",
   ];
 
+  let countdownActive = false;
+
   const msg = messages[Math.floor(Math.random() * messages.length)];
 
-  // Build overlay HTML
-  const overlay = document.createElement('div');
-  overlay.id = 'shorts-pause-overlay';
-  overlay.innerHTML = `
-    <div id="shorts-pause-box">
-      <h2>Shorts Pause</h2>
-      <div id="shorts-pause-timer">${COUNTDOWN}</div>
-      <div id="shorts-pause-bar-track">
-        <div id="shorts-pause-bar"></div>
+  const buildOverlay = () => {
+    const overlay = document.createElement('div');
+    overlay.id = 'shorts-pause-overlay';
+    overlay.innerHTML = `
+      <div id="shorts-pause-box">
+        <h2>Shorts Pause</h2>
+        <div id="shorts-pause-timer">${COUNTDOWN}</div>
+        <div id="shorts-pause-bar-track">
+          <div id="shorts-pause-bar"></div>
+        </div>
+        <p id="shorts-pause-message">${msg}</p>
+        <button id="shorts-pause-btn">Watch now</button>
       </div>
-      <p id="shorts-pause-message">${msg}</p>
-      <button id="shorts-pause-btn">Watch now</button>
-    </div>
-  `;
-
-  // Block scrolling on page while overlay is up
-  document.documentElement.style.overflow = 'hidden';
-
-  const inject = () => {
-    if (!document.body) {
-      requestAnimationFrame(inject);
-      return;
-    }
-    document.body.appendChild(overlay);
-    startCountdown();
+    `;
+    return overlay;
   };
 
-  const startCountdown = () => {
-    const timerEl = document.getElementById('shorts-pause-timer');
-    const barEl   = document.getElementById('shorts-pause-bar');
-    const btnEl   = document.getElementById('shorts-pause-btn');
+  const startCountdown = (overlay) => {
+    const timerEl = overlay.querySelector('#shorts-pause-timer');
+    const barEl   = overlay.querySelector('#shorts-pause-bar');
+    const btnEl   = overlay.querySelector('#shorts-pause-btn');
 
     let remaining = COUNTDOWN;
 
-    // Trigger CSS bar animation on next frame so transition fires
     requestAnimationFrame(() => {
       barEl.style.width = '0%';
     });
@@ -53,18 +44,17 @@
     const tick = () => {
       remaining--;
       timerEl.textContent = remaining;
-
       if (remaining <= 0) {
         clearInterval(interval);
         timerEl.textContent = '✓';
         btnEl.style.display = 'inline-block';
-        
       }
     };
 
     const interval = setInterval(tick, 1000);
 
     const dismiss = () => {
+      countdownActive = false;
       overlay.style.transition = 'opacity 0.25s';
       overlay.style.opacity = '0';
       document.documentElement.style.overflow = '';
@@ -72,29 +62,73 @@
     };
 
     btnEl.addEventListener('click', dismiss);
-
   };
 
-  // Run on initial load
-  inject();
+  const inject = () => {
+    if (!document.body) {
+      requestAnimationFrame(inject);
+      return;
+    }
+    // Guard: don't double-inject
+    if (document.getElementById('shorts-pause-overlay')) return;
 
-  // YouTube is a SPA — re-run overlay on Shorts navigation
-  let lastUrl = location.href;
-  const observer = new MutationObserver(() => {
-    if (location.href !== lastUrl) {
-      lastUrl = location.href;
-      if (/youtube\.com\/shorts\//.test(location.href)) {
-        // Small delay so the new page DOM settles
-        setTimeout(() => {
-          const existing = document.getElementById('shorts-pause-overlay');
-          if (!existing) inject();
-        }, 400);
+    const overlay = buildOverlay();
+    document.documentElement.style.overflow = 'hidden';
+    document.body.appendChild(overlay);
+    startCountdown(overlay);
+  };
+
+  const tryInject = () => {
+    if (!/\/shorts\//.test(location.pathname)) return;
+    if (document.getElementById('shorts-pause-overlay')) return;
+    if (countdownActive) return;
+    countdownActive = true;
+    inject();
+  };
+
+  let lastPathname = location.pathname;
+
+  // --- FIX 1: observe <html> with subtree:true so no DOM swap goes undetected ---
+  const domObserver = new MutationObserver(() => {
+    // Detect SPA navigation (URL change without full reload)
+    if (location.pathname !== lastPathname) {
+      lastPathname = location.pathname;
+      if (/\/shorts\//.test(location.pathname)) {
+        countdownActive = false;
+        setTimeout(tryInject, 150);
+      } else {
+        // Navigated away from shorts, clear overlay
+        countdownActive = false;
+        const existing = document.getElementById('shorts-pause-overlay');
+        if (existing) existing.remove();
       }
+    }
+
+    if (!/\/shorts\//.test(location.pathname)) return;
+    
+    // Ensure overlay remains if active
+    if (!document.getElementById('shorts-pause-overlay') && countdownActive) {
+      // Overlay was ripped out by YouTube's router — reset and re-inject
+      countdownActive = false;
+      setTimeout(tryInject, 150);
     }
   });
 
-  observer.observe(document.body || document.documentElement, {
-    subtree: true,
-    childList: true,
+  // Observe documentElement (not body) so we survive body replacement,
+  // and use subtree:true to catch deep removals
+  domObserver.observe(document.documentElement, { childList: true, subtree: true });
+
+  // SPA navigation fallback (middle-click / in-app nav)
+  document.addEventListener('yt-navigate-finish', () => {
+    if (location.pathname !== lastPathname) {
+      lastPathname = location.pathname;
+    }
+    if (/\/shorts\//.test(location.pathname)) {
+      countdownActive = false;
+      setTimeout(tryInject, 300);
+    }
   });
+
+  // Initial attempt
+  tryInject();
 })();
