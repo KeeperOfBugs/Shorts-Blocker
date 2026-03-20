@@ -11,11 +11,12 @@
 
   let countdownActive = false;
 
-  const msg = messages[Math.floor(Math.random() * messages.length)];
+  let msg = messages[Math.floor(Math.random() * messages.length)];
 
   const buildOverlay = () => {
     const overlay = document.createElement('div');
     overlay.id = 'shorts-pause-overlay';
+    msg = messages[Math.floor(Math.random() * messages.length)];
     overlay.innerHTML = `
       <div id="shorts-pause-box">
         <h2>Shorts Pause</h2>
@@ -58,6 +59,7 @@
       overlay.style.transition = 'opacity 0.25s';
       overlay.style.opacity = '0';
       document.documentElement.style.overflow = '';
+      resumeShort();
       setTimeout(() => overlay.remove(), 300);
     };
 
@@ -86,10 +88,7 @@
     inject();
   };
 
-  let lastPathname = location.pathname;
-
-  // --- FIX 1: observe <html> with subtree:true so no DOM swap goes undetected ---
-  const domObserver = new MutationObserver(() => {
+  const checkPage = () => {
     // Detect SPA navigation (URL change without full reload)
     if (location.pathname !== lastPathname) {
       lastPathname = location.pathname;
@@ -112,6 +111,13 @@
       countdownActive = false;
       setTimeout(tryInject, 150);
     }
+  }
+
+  let lastPathname = location.pathname;
+
+  // --- FIX 1: observe <html> with subtree:true so no DOM swap goes undetected ---
+  const domObserver = new MutationObserver(() => {
+    checkPage()
   });
 
   // Observe documentElement (not body) so we survive body replacement,
@@ -127,6 +133,10 @@
       countdownActive = false;
       setTimeout(tryInject, 300);
     }
+  });
+
+  window.addEventListener('popstate', (event) => {
+    checkPage()
   });
 
   // Initial attempt
