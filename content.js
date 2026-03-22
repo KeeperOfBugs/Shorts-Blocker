@@ -58,12 +58,35 @@
       countdownActive = false;
       overlay.style.pointerEvents = 'none';
       overlay.style.transition = 'opacity 0.25s';
+      resumeShort();
       overlay.style.opacity = '0';
       document.documentElement.style.overflow = '';
       setTimeout(() => overlay.remove(), 300);
     };
 
     btnEl.addEventListener('click', dismiss);
+  };
+
+  let videoWatcher = null;
+
+  const pauseShort = () => {
+    document.querySelectorAll('video').forEach(v => v.pause());
+
+    if (videoWatcher) videoWatcher.disconnect();
+    videoWatcher = new MutationObserver(() => {
+      document.querySelectorAll('video').forEach(v => {
+        if (!v.paused) v.pause();
+      });
+    });
+    videoWatcher.observe(document.documentElement, { childList: true, subtree: true });
+  };
+
+  const resumeShort = () => {
+    if (videoWatcher) {
+      videoWatcher.disconnect();
+      videoWatcher = null;
+    }
+    document.querySelectorAll('video').forEach(v => v.play());
   };
 
   const inject = () => {
@@ -77,6 +100,7 @@
     const overlay = buildOverlay();
     document.documentElement.style.overflow = 'hidden';
     document.body.appendChild(overlay);
+    pauseShort();
     startCountdown(overlay);
   };
 
@@ -91,6 +115,7 @@
   let lastPathname = location.pathname;
 
   const checkPage = () => {
+    // console.log(location.pathname)
     // Detect SPA navigation (URL change without full reload)
     if (location.pathname != lastPathname) {
       lastPathname = location.pathname;
@@ -102,6 +127,7 @@
         overlay.style.pointerEvents = 'none';
         overlay.style.transition = 'opacity 0.25s';
         overlay.style.opacity = '0';
+        resumeShort();
         document.documentElement.style.overflow = '';
         setTimeout(() => overlay.remove(), 300);
       }
