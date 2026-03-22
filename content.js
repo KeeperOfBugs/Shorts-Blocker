@@ -56,10 +56,10 @@
 
     const dismiss = () => {
       countdownActive = false;
+      overlay.style.pointerEvents = 'none';
       overlay.style.transition = 'opacity 0.25s';
       overlay.style.opacity = '0';
       document.documentElement.style.overflow = '';
-      resumeShort();
       setTimeout(() => overlay.remove(), 300);
     };
 
@@ -88,18 +88,22 @@
     inject();
   };
 
+  let lastPathname = location.pathname;
+
   const checkPage = () => {
     // Detect SPA navigation (URL change without full reload)
-    if (location.pathname !== lastPathname) {
+    if (location.pathname != lastPathname) {
       lastPathname = location.pathname;
       if (/\/shorts\//.test(location.pathname)) {
         countdownActive = false;
         setTimeout(tryInject, 150);
       } else {
-        // Navigated away from shorts, clear overlay
-        countdownActive = false;
-        const existing = document.getElementById('shorts-pause-overlay');
-        if (existing) existing.remove();
+        let overlay = document.getElementById("shorts-pause-overlay")
+        overlay.style.pointerEvents = 'none';
+        overlay.style.transition = 'opacity 0.25s';
+        overlay.style.opacity = '0';
+        document.documentElement.style.overflow = '';
+        setTimeout(() => overlay.remove(), 300);
       }
     }
 
@@ -112,8 +116,6 @@
       setTimeout(tryInject, 150);
     }
   }
-
-  let lastPathname = location.pathname;
 
   // --- FIX 1: observe <html> with subtree:true so no DOM swap goes undetected ---
   const domObserver = new MutationObserver(() => {
