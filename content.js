@@ -26,6 +26,11 @@
         </div>
         <p id="shorts-pause-message">${msg}</p>
         <button id="shorts-pause-btn">Watch now</button>
+        <h1 id="or"> OR </h1>
+        <form action="">
+            <label id="iaskagain">Whats 33 + 34?</label>
+            <input type="text" name="answer" id="answer" placeholder="Solve to watch!"><button type="button" id="answertry">Try</button>
+        </form>
       </div>
     `;
     return overlay;
@@ -103,7 +108,9 @@
     document.body.appendChild(overlay);
     pauseShort();
     startCountdown(overlay);
-    bar.style.transition = "width 16s linear";
+    bar.style.transition = "0s linear"
+    bar.style.width = '100%';
+    bar.style.transition = "width 15s linear";
   };
 
   const tryInject = () => {
