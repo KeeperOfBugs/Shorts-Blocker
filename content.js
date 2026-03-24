@@ -98,10 +98,12 @@
     if (document.getElementById('shorts-pause-overlay')) return;
 
     const overlay = buildOverlay();
+    let bar = overlay.querySelector("#shorts-pause-bar");
     document.documentElement.style.overflow = 'hidden';
     document.body.appendChild(overlay);
     pauseShort();
     startCountdown(overlay);
+    bar.style.transition = "width 16s linear";
   };
 
   const tryInject = () => {
