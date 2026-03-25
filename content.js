@@ -17,6 +17,8 @@
     const overlay = document.createElement('div');
     overlay.id = 'shorts-pause-overlay';
     msg = messages[Math.floor(Math.random() * messages.length)];
+    let random1 = Math.round(Math.random() * 50)
+    let random2 = Math.round(Math.random() * 50)
     overlay.innerHTML = `
       <div id="shorts-pause-box">
         <h2>Shorts Pause</h2>
@@ -28,11 +30,26 @@
         <button id="shorts-pause-btn">Watch now</button>
         <h1 id="or"> OR </h1>
         <form action="">
-            <label id="iaskagain">Whats 33 + 34?</label>
+            <label id="iaskagain">Whats ${random1} + ${random2}?</label>
             <input type="text" name="answer" id="answer" placeholder="Solve to watch!"><button type="button" id="answertry">Try</button>
         </form>
       </div>
     `;
+
+    let button = overlay.querySelector("#answertry")
+    let input = overlay.querySelector("#answer")
+    button.onclick = function() {
+      if (input.value == random1 + random2) {
+        countdownActive = false;
+        overlay.style.pointerEvents = 'none';
+        overlay.style.transition = 'opacity 0.25s';
+        resumeShort();
+        overlay.style.opacity = '0';
+        document.documentElement.style.overflow = '';
+        setTimeout(() => overlay.remove(), 300);
+      }
+    }
+
     return overlay;
   };
 
@@ -108,6 +125,7 @@
     document.body.appendChild(overlay);
     pauseShort();
     startCountdown(overlay);
+    
     bar.style.transition = "0s linear"
     bar.style.width = '100%';
     bar.style.transition = "width 15s linear";
