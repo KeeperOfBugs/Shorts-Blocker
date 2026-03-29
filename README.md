@@ -11,7 +11,7 @@ Instead of infinite brainrotting, this extensions makes you: either wait a few s
 
 **For Developers:**
 1. Clone this repo
-2. Open `chrome://extensions` (or `edge://extensions`)
+2. Open `chrome://extensions` (or `about:debugging`)
 3. Enable "Developer mode"
 4. Click "Load unpacked" → select the folder containing `manifest.json`
 
