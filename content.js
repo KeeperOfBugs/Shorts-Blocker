@@ -17,8 +17,31 @@
     const overlay = document.createElement('div');
     overlay.id = 'shorts-pause-overlay';
     msg = messages[Math.floor(Math.random() * messages.length)];
-    let random1 = Math.round(Math.random() * 50)
-    let random2 = Math.round(Math.random() * 50)
+
+    let type = Math.round(Math.random() * 3)
+    let equiation = ""
+    let result = 0
+    if (type == 1) {
+        let random1 = Math.round(Math.random() * 100 + 10)
+        let random2 = Math.round(Math.random() * 100 + 10)
+
+        equiation = `${random1} + ${random2}`
+        result = random1 + random2
+    } else if (type == 2) {
+        let random0 =  Math.round(Math.random() * 10 + 1)
+        let random1 = Math.round(Math.random() * 50 + 1)
+        let random2 = Math.round(Math.random() * 50 + 1)
+
+        equiation = `${random1} + ${random2} * ${random0}`
+        result = random1 + random2 * random0
+    } else {
+        let random0 =  2
+        let random1 = Math.round(Math.random() * 50 + 1)
+        let random2 = Math.round(Math.random() * 50 + 1)
+
+        equiation = `${random1} + ${random2} / ${random0}`
+        result = random1 + random2 / random0
+    }
     overlay.innerHTML = `
       <div id="shorts-pause-box">
         <h2>Shorts Pause</h2>
@@ -30,7 +53,7 @@
         <button id="shorts-pause-btn">Watch now</button>
         <h1 id="or"> OR </h1>
         <form action="">
-            <label id="iaskagain">Whats ${random1} + ${random2}?</label>
+            <label id="iaskagain">Whats ${equiation}?</label>
             <input type="text" name="answer" id="answer" placeholder="Solve to watch!"><button type="button" id="answertry">Try</button>
         </form>
       </div>
@@ -39,7 +62,7 @@
     let button = overlay.querySelector("#answertry")
     let input = overlay.querySelector("#answer")
     button.onclick = function() {
-      if (input.value == random1 + random2) {
+      if (input.value == result) {
         countdownActive = false;
         overlay.style.pointerEvents = 'none';
         overlay.style.transition = 'opacity 0.25s';
@@ -47,8 +70,14 @@
         overlay.style.opacity = '0';
         document.documentElement.style.overflow = '';
         setTimeout(() => overlay.remove(), 300);
+      } else {
+        input.classList.add("input-error")
       }
     }
+
+    input.addEventListener("animationend", () => {
+      input.classList.remove("input-error");
+    });
 
     return overlay;
   };
