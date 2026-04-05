@@ -6,7 +6,7 @@ Super simple - no data storing, ads or premium.
 Instead of infinite brainrotting, this extensions makes you: either wait a few seconds **or** solve a simple math equation. 
 
 **HOW TO USE:**
-1. Download extensions from your browser extension market
+1. Download extensions from your browser extension market (currently only <a href="https://addons.mozilla.org/en-CA/firefox/addon/shorts-pause/" target="_blank" >firefox</a>)
 2. THATS IT!!! Now whenever you try to watch shorts it will show an overlay that will force you to be more self-aware
 
 **For Developers:**
